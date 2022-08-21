@@ -7,30 +7,49 @@ use Illuminate\Http\Request;
 use App\Models\Presensi;
 use Auth;
 use Carbon\Carbon;
+use DB;
+use stdClass;
 date_default_timezone_set("Asia/Jakarta");
 
 class PresensiController extends Controller
 {
     function getPresensis()
     {
-        $presensis = Presensi::select('presensis.*')
-                        ->where('user_id', Auth::user()->id)
-                        ->orderBy('waktu', 'desc')
-                        ->get();
-        foreach($presensis as $item) {
-            $datetime = Carbon::parse($item->waktu)->locale('id');
+        $presensis_array = [];
+        $tanggals = DB::SELECT("SELECT DATE(waktu) as tanggal FROM `presensis` GROUP BY DATE(waktu) ORDER BY DATE(waktu) DESC");
+
+        foreach($tanggals as $item) {
+            $presensis = Presensi::select('id', 'keterangan', 'waktu')
+                            ->whereDate('waktu', $item->tanggal)->get();
+            foreach($presensis as $p) {
+                $datetime = Carbon::parse($p->waktu)->locale('id');
+
+                $datetime->settings(['formatFunction' => 'translatedFormat']);
+                
+                $p->waktu = $datetime->format('H:i');
+            }
+            $datetime = Carbon::parse($item->tanggal)->locale('id');
 
             $datetime->settings(['formatFunction' => 'translatedFormat']);
             
-            $item->tanggal = $datetime->format('l, j F Y');
-            $item->waktu = $datetime->format('H:i');
+            $obj = new stdClass();
+            $obj->tanggal = $datetime->format('l, j F Y');
+            $obj->presensis = $presensis;
+            if (date('Y-m-d') == $item->tanggal) {
+                $obj->is_hari_ini = true;
+            } else {
+                $obj->is_hari_ini = false;
+            }
+            
+            array_push($presensis_array, $obj);
         }
 
         return response()->json([
             'success' => true,
-            'data' => $presensis,
+            'data' => $presensis_array,
             'message' => 'Sukses menampilkan data'
         ]);
+    
     }
     function savePresensi(Request $request) 
     {
