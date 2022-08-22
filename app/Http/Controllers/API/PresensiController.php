@@ -47,6 +47,7 @@ class PresensiController extends Controller
     {
         $keterangan = "";
         $presensi = Presensi::whereDate('tanggal', '=', date('Y-m-d'))
+                        ->where('user_id', Auth::user()->id)
                         ->first();
         if ($presensi == null) {
             $presensi = Presensi::create([
