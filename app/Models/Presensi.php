@@ -19,10 +19,11 @@ class Presensi extends Model
     protected $fillable = [
         'id',
         'user_id',
-        'keterangan',
         'latitude',
         'longitude',
-        'waktu',
+        'tanggal',
+        'masuk',
+        'pulang',
         'created_at'
     ];
 }

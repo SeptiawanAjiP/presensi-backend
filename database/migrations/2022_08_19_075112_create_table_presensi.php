@@ -16,10 +16,11 @@ class CreateTablePresensi extends Migration
         Schema::create('presensis', function (Blueprint $table) {
             $table->id();
             $table->integer('user_id');
-            $table->string('keterangan');
             $table->decimal('latitude', 12,5);
             $table->decimal('longitude', 12,5);
-            $table->datetime('waktu');
+            $table->date('tanggal');
+            $table->time('masuk');
+            $table->time('pulang');
             $table->timestamps();
         });
     }

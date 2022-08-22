@@ -30,12 +30,13 @@ class HomeController extends Controller
                         ->join('users', 'presensis.user_id', '=', 'users.id')
                         ->get();
         foreach($presensis as $item) {
-            $datetime = Carbon::parse($item->waktu)->locale('id');
+            $datetime = Carbon::parse($item->tanggal)->locale('id');
 
             $datetime->settings(['formatFunction' => 'translatedFormat']);
             
-            $item->waktu = $datetime->format('l, j F Y - H:i a');
+            $item->tanggal = $datetime->format('l, j F Y');
         }
+        // dd($presensis);
         return view('home', [
             'presensis' => $presensis
         ]);

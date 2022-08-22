@@ -13,7 +13,8 @@
                         <tr>
                             <th>Nama</th>
                             <th>Waktu</th>
-                            <th>Keterangan</th>
+                            <th>Masuk</th>
+                            <th>Pulang</th>
                             <th>Lokasi (Latitude, Longitude)</th>
                         </tr>
                     </thead>
@@ -21,8 +22,9 @@
                         @foreach($presensis as $item)
                         <tr>
                             <td>{{$item->name}}</td>
-                            <td>{{$item->waktu}}</td>
-                            <td>{{$item->keterangan}}</td>
+                            <td>{{$item->tanggal}}</td>
+                            <td>{{$item->masuk}}</td>
+                            <td>{{$item->pulang}}</td>
                             <td>{{$item->latitude}}, {{$item->longitude}}</td>
                         </tr>
                         @endforeach
