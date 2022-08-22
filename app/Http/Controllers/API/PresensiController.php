@@ -17,6 +17,11 @@ class PresensiController extends Controller
     {
         $presensis = Presensi::where('user_id', Auth::user()->id)->get();
         foreach($presensis as $item) {
+            if ($item->tanggal == date('Y-m-d')) {
+                $item->is_hari_ini = true;
+            } else {
+                $item->is_hari_ini = false;
+            }
             $datetime = Carbon::parse($item->tanggal)->locale('id');
             $masuk = Carbon::parse($item->masuk)->locale('id');
             $pulang = Carbon::parse($item->pulang)->locale('id');
@@ -28,12 +33,6 @@ class PresensiController extends Controller
             $item->tanggal = $datetime->format('l, j F Y');
             $item->masuk = $masuk->format('H:i');
             $item->pulang = $pulang->format('H:i');
-
-            if ($item->tanggal == date('Y-m-d')) {
-                $item->is_hari_ini = true;
-            } else {
-                $item->is_hari_ini = false;
-            }
         }
 
         return response()->json([
