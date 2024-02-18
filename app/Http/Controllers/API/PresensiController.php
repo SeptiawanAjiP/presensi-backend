@@ -54,12 +54,13 @@ class PresensiController extends Controller
                 'latitude' => $request->latitude,
                 'longitude' => $request->longitude,
                 'tanggal' => date('Y-m-d'),
-                'masuk' => date('H:i:s')
+                'masuk' => date('H:i:s'),
+                'pulang' => null
             ]);
             return response()->json([
                 'success' => true,
-                'data' => $presensi,
-                'message' => 'Sukses absen untuk masuk'
+                'message' => 'Sukses absen untuk masuk',
+                'data' => $presensi
             ]);
         } else {
             if ($presensi->pulang !== null) {
