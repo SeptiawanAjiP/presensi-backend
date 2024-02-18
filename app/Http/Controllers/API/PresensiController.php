@@ -38,8 +38,8 @@ class PresensiController extends Controller
 
         return response()->json([
             'success' => true,
-            'data' => $presensis,
-            'message' => 'Sukses menampilkan data'
+            'message' => 'Sukses menampilkan data',
+            'data' => $presensis
         ]);
     }
     function savePresensi(Request $request)
@@ -55,6 +55,11 @@ class PresensiController extends Controller
                 'longitude' => $request->longitude,
                 'tanggal' => date('Y-m-d'),
                 'masuk' => date('H:i:s')
+            ]);
+            return response()->json([
+                'success' => true,
+                'data' => $presensi,
+                'message' => 'Sukses absen untuk masuk'
             ]);
         } else {
             if ($presensi->pulang !== null) {
@@ -75,7 +80,7 @@ class PresensiController extends Controller
 
             return response()->json([
                 'success' => true,
-                'message' => 'Sukses simpan',
+                'message' => 'Sukses Absen untuk Pulang',
                 'data' => $presensi
             ]);
         }
