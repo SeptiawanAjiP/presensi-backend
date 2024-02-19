@@ -9,6 +9,7 @@ use Auth;
 use Carbon\Carbon;
 use DB;
 use stdClass;
+
 date_default_timezone_set("Asia/Jakarta");
 
 class PresensiController extends Controller
@@ -16,7 +17,7 @@ class PresensiController extends Controller
     function getPresensis()
     {
         $presensis = Presensi::where('user_id', Auth::user()->id)->get();
-        foreach($presensis as $item) {
+        foreach ($presensis as $item) {
             if ($item->tanggal == date('Y-m-d')) {
                 $item->is_hari_ini = true;
             } else {
@@ -29,7 +30,7 @@ class PresensiController extends Controller
             $datetime->settings(['formatFunction' => 'translatedFormat']);
             $masuk->settings(['formatFunction' => 'translatedFormat']);
             $pulang->settings(['formatFunction' => 'translatedFormat']);
-            
+
             $item->tanggal = $datetime->format('l, j F Y');
             $item->masuk = $masuk->format('H:i');
             $item->pulang = $pulang->format('H:i');
@@ -37,41 +38,52 @@ class PresensiController extends Controller
 
         return response()->json([
             'success' => true,
-            'data' => $presensis,
-            'message' => 'Sukses menampilkan data'
+            'message' => 'Sukses menampilkan data',
+            'data' => $presensis
         ]);
-        
-    
     }
-    function savePresensi(Request $request) 
+    function savePresensi(Request $request)
     {
         $keterangan = "";
         $presensi = Presensi::whereDate('tanggal', '=', date('Y-m-d'))
-                        ->where('user_id', Auth::user()->id)
-                        ->first();
+            ->where('user_id', Auth::user()->id)
+            ->first();
         if ($presensi == null) {
             $presensi = Presensi::create([
                 'user_id' => Auth::user()->id,
                 'latitude' => $request->latitude,
                 'longitude' => $request->longitude,
                 'tanggal' => date('Y-m-d'),
-                'masuk' => date('H:i:s')
+                'masuk' => date('H:i:s'),
+                'pulang' => null
+            ]);
+            return response()->json([
+                'success' => true,
+                'message' => 'Sukses absen untuk masuk',
+                'data' => $presensi
             ]);
         } else {
-            $data = [
-                'pulang' => date('H:i:s')
-            ];
+            if ($presensi->pulang !== null) {
+                $keterangan = "Anda sudah melakukan presensi";
+                return response()->json([
+                    'success' => false,
+                    'message' => $keterangan,
+                    'data' => null
+                ]);
+            } else {
+                $data = [
+                    'pulang' => date('H:i:s')
+                ];
+                Presensi::whereDate('tanggal', '=', date('Y-m-d'))->update($data);
+            }
+            $presensi = Presensi::whereDate('tanggal', '=', date('Y-m-d'))
+                ->first();
 
-            Presensi::whereDate('tanggal', '=', date('Y-m-d'))->update($data);
-
+            return response()->json([
+                'success' => true,
+                'message' => 'Sukses Absen untuk Pulang',
+                'data' => $presensi
+            ]);
         }
-        $presensi = Presensi::whereDate('tanggal', '=', date('Y-m-d'))
-                 ->first();
-       
-        return response()->json([
-            'success' => true,
-            'data' => $presensi,
-            'message' => 'Sukses simpan'
-        ]);
     }
 }

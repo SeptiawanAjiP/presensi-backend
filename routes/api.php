@@ -24,7 +24,7 @@ Route::post('/login', [App\Http\Controllers\API\AuthController::class, 'login'])
 
 //Protecting Routes
 Route::group(['middleware' => ['auth:sanctum']], function () {
-    Route::get('/profile', function(Request $request) {
+    Route::get('/profile', function (Request $request) {
         return auth()->user();
     });
 
@@ -32,5 +32,5 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
     Route::post('/logout', [App\Http\Controllers\API\AuthController::class, 'logout']);
     Route::get('/get-presensi',  [App\Http\Controllers\API\PresensiController::class, 'getPresensis']);
 
-    Route::post('save-presensi', [App\Http\Controllers\API\PresensiController::class, 'savePresensi']);
+    Route::post('/save-presensi', [App\Http\Controllers\API\PresensiController::class, 'savePresensi']);
 });
